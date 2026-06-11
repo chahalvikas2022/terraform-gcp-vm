@@ -1,0 +1,91 @@
+---
+#
+# This is the canonical configuration for the `README.md`
+# Run `make readme` to rebuild the `README.md`
+
+# Name of this project
+name: Terraform GCP VM
+
+# License of this project
+license: "APACHE"
+
+# Canonical GitHub repo
+github_repo: opsstation/terraform-gcp-vm
+
+# Badges to display
+badges:
+  - name: "Latest Release"
+    image: "https://img.shields.io/github/release/opsstation/terraform-gcp-vm.svg"
+    url: "https://github.com/opsstation/terraform-gcp-vm/releases/latest"
+  - name: "tfsec"
+    image: "https://github.com/opsstation/terraform-gcp-vm/actions/workflows/tfsec.yml/badge.svg"
+    url: "https://github.com/opsstation/terraform-gcp-vm/actions/workflows/tfsec.yml"
+  - name: "Licence"
+    image: "https://img.shields.io/badge/License-APACHE-blue.svg"
+    url: "LICENSE.md"
+  - name: "Changelog"
+    image: "https://img.shields.io/badge/Changelog-blue"
+    url: "CHANGELOG.md"
+
+prerequesties:
+  - name: Terraform
+    url: https://learn.hashicorp.com/terraform/getting-started/install.html
+    version: ">= 1.13.3"
+
+providers:
+  - name: google
+    url: https://registry.terraform.io/providers/hashicorp/google
+    version: ">= 5.31.0"
+
+
+module_dependencies:
+  - name: Labels Module
+    url: https://github.com/opsstation/terraform-multicloud-labels
+    description: Provides resource tagging.
+
+  - name: VPC Module
+    url: https://github.com/opsstation/terraform-gcp-vpc
+    description: Creates and manages VPC networks and subnets.
+
+  - name: Subnet Module
+    url: https://github.com/opsstation/terraform-gcp-subnet
+    description: Creates and manages subnets inside a VPC.
+
+  - name: Firewall Rules Module
+    url: https://github.com/opsstation/terraform-gcp-firewall
+    description: Manages firewall rules for the VPC.
+
+
+#  description of this project
+description: |-
+  Terraform module vm to create new modules using this as baseline
+
+# How to use this project
+usage: |-
+  Here are some examples of how you can use this module in your inventory structure:
+
+  ### vm example
+  ```hcl
+      module "compute_instance" {
+      source                 = "opsstation/vm/gcp"
+      version                = "1.0.1"
+      name                   = "dev"
+      environment            = "test"
+      instance_count         = 1
+      zone                   = "asia-northeast1-a"
+      instance_tags          = ["foo", "bar"]
+      machine_type           = "e2-small"
+      image                  = "ubuntu-2204-jammy-v20230908"
+      service_account_scopes = ["cloud-platform"]
+      subnetwork             = module.subnet.subnet_id
+      network                = module.vpc.vpc_id
+    
+      enable_public_ip = true # Enable public IP only if enable_public_ip is true
+      metadata = {
+        ssh-keys = <<EOF
+          ubuntu:ssh-rsa AAAAB3NzaCph/FXUAHBaekf+hzL58= suresh@suresh
+        EOF
+      }
+    }
+  
+  ```
